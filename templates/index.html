@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Rate and SpO2 Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Heart Rate and SpO2 Data</h1>
+    <div class="" style="max-width: 100%; max-height: 90%;"><canvas id="myChart" width="400" height="200"></canvas></div>
+    <script>
+        // WebSocket
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        // Save data
+        const heartRateData = [];
+        const spo2Data = [];
+        const labels = [];
+
+        // New data recieved from server
+        socket.on('new_data', function(data) {
+            console.log(data);
+            const heartRate = parseFloat(data["Heart Rate"]);
+            const spo2 = parseFloat(data["SpO2"]);
+            const timeStamp = new Date().toLocaleTimeString();
+
+            // Add new data to array
+            heartRateData.push(heartRate);
+            spo2Data.push(spo2);
+            labels.push(timeStamp);
+
+            // Update
+            myChart.update();
+        });
+
+        // Chart config
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Heart Rate (bpm)',
+                    data: heartRateData,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    fill: false
+                }, {
+                    label: 'SpO2 (%)',
+                    data: spo2Data,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
