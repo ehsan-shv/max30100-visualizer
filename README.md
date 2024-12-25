@@ -1,4 +1,4 @@
-Python-Flask and SocketIO app to visualize Max30100 data on the browser:
+A Python-Flask and SocketIO-based app for real-time visualization of MAX30100 sensor data in the browser, displaying heart rate and SpO2 measurements with interactive charts.
 
 ## How to run:
 
